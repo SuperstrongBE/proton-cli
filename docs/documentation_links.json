@@ -1,0 +1,78 @@
+[
+  {
+    "title": "Account Commands",
+    "path": "/documentations/proton-cli/account"
+  },
+  {
+    "title": "Action Commands",
+    "path": "/documentations/proton-cli/action"
+  },
+  {
+    "title": "Block Commands",
+    "path": "/documentations/proton-cli/block"
+  },
+  {
+    "title": "Chain Commands",
+    "path": "/documentations/proton-cli/chain"
+  },
+  {
+    "title": "Contract Commands",
+    "path": "/documentations/proton-cli/contract"
+  },
+  {
+    "title": "Encode Commands",
+    "path": "/documentations/proton-cli/encode"
+  },
+  {
+    "title": "Faucet Commands",
+    "path": "/documentations/proton-cli/faucet"
+  },
+  {
+    "title": "Generate Commands",
+    "path": "/documentations/proton-cli/generate"
+  },
+  {
+    "title": "Key Commands",
+    "path": "/documentations/proton-cli/key"
+  },
+  {
+    "title": "Msig Commands",
+    "path": "/documentations/proton-cli/msig"
+  },
+  {
+    "title": "Permission Commands",
+    "path": "/documentations/proton-cli/permission"
+  },
+  {
+    "title": "Psr Commands",
+    "path": "/documentations/proton-cli/psr"
+  },
+  {
+    "title": "Ram Commands",
+    "path": "/documentations/proton-cli/ram"
+  },
+  {
+    "title": "Rpc Commands",
+    "path": "/documentations/proton-cli/rpc"
+  },
+  {
+    "title": "Scan Commands",
+    "path": "/documentations/proton-cli/scan"
+  },
+  {
+    "title": "System Commands",
+    "path": "/documentations/proton-cli/system"
+  },
+  {
+    "title": "Table Commands",
+    "path": "/documentations/proton-cli/table"
+  },
+  {
+    "title": "Transaction Commands",
+    "path": "/documentations/proton-cli/transaction"
+  },
+  {
+    "title": "Overview",
+    "path": "/documentations/proton-cli/overview"
+  }
+]
