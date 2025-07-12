@@ -3,8 +3,9 @@ import { config } from '../storage/config'
 
 export async function getLightAccount(account: string) {
   try {
-    const chain = config.get('currentChain')
+    const chain = config.get('currentChain');
     const lightApi = new LightApi.JsonRpc(chain.toLowerCase().replace('-', ''))
+    console.log(lightApi,'onRequest')
     return lightApi.get_account_info(account)
   } catch (e) {
     return undefined
