@@ -28,3 +28,14 @@ export const EP_DISCOVERY: ChainDiscoveryService[] = [
     service_url: "https://danemarkbp.com/apis/get_json_testnet.php?type=ssl",
   },
 ];
+
+export const LIGHT_CLIENT_ENDPOINTS = [
+  {
+    chain: "proton",
+    endpoints: "https://proton.light-api.net",
+  },
+  {
+    chain: "proton-test",
+    endpoints: "https://testnet-lightapi.eosams.xeos.me",
+  },
+];
