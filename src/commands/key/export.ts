@@ -49,7 +49,7 @@ export default class ExportKeys extends Command {
         name: "mode",
         message: "Select export mode",
         type: "list",
-        choices: ["text", "pdf"],
+        choices: ["txt", "pdf", "json"],
       },
     ]);
 
@@ -79,11 +79,18 @@ export default class ExportKeys extends Command {
           createPdf(exportedKeys, `${pdfFileName}.pdf`);
         }
 
-        if (exportMode.mode === "text") {
+        if (exportMode.mode === "txt") {
           const txtContent = exportedKeys.map((item) => {
             return `${JSON.stringify(item)}\n`;
           });
           createTxtFile(txtContent.join(""), `${pdfFileName}.txt`);
+        }
+
+        if (exportMode.mode === "json") {
+          createTxtFile(
+            JSON.stringify(exportedKeys, null, 2),
+            `${pdfFileName}.json`
+          );
         }
 
         CliUx.ux.action.stop(green(`Done`));
@@ -91,9 +98,7 @@ export default class ExportKeys extends Command {
           green(
             `Exported ${
               exportedKeys.length
-            } keys to ${process.cwd()}/${pdfFileName}.${
-              exportMode.mode === "pdf" ? "pdf" : "txt"
-            }`
+            } keys to ${process.cwd()}/${pdfFileName}.${exportMode.mode}`
           )
         );
       });
