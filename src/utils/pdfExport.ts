@@ -12,11 +12,23 @@ const fonts = {
   },
 };
 
-export function createPdf(accounts: ExportAccountType[], fileName: string) {
+export function createPdf(
+  accounts: ExportAccountType[],
+  fileName: string,
+  password?: string,
+  showPrivateKey?: boolean
+) {
   const PdfPrinter = new pdfMake(fonts);
   const docDefinition = {
     pageSize: "A5",
-    content: accounts.map((account) => exportAccount(account)),
+    content: [
+      { text: "WARNING." },
+      {
+        text: "This following documents contains highly sensitive informations, make sure to store it securely. If you print it, store it into a secure vault and delete the file.",
+        pageBreak: "after",
+      },
+      ...accounts.map((account) => exportAccount(account, showPrivateKey)),
+    ],
     styles: {
       fieldHeader: {
         fontSize: 10,
@@ -34,13 +46,23 @@ export function createPdf(accounts: ExportAccountType[], fileName: string) {
     },
   };
 
+  if (password) {
+    docDefinition.userPassword = password;
+    docDefinition.ownerPassword = password;
+    docDefinition.permissions = {
+      modifying: false,
+      copying: false,
+      annotating: false,
+    };
+  }
+
   const pdf = PdfPrinter.createPdfKitDocument(docDefinition);
   pdf.pipe(fs.createWriteStream(fileName));
   pdf.end();
 }
 
-function exportAccount(account: ExportAccountType) {
-  return {
+function exportAccount(account: ExportAccountType, showPrivateKey?: boolean) {
+  const definition = {
     pageBreak: "after",
     table: {
       widths: ["100%"],
@@ -93,4 +115,13 @@ function exportAccount(account: ExportAccountType) {
       ],
     },
   };
+  if (showPrivateKey) {
+    definition.table.body.push([
+      [
+        { text: "Private key", style: "fieldHeader" },
+        { text: account.privateKey, style: "filedValue" },
+      ],
+    ]);
+  }
+  return definition;
 }
