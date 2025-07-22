@@ -98,14 +98,5 @@ export default class ExportKeys extends Command {
         );
       });
     }
-    // const displayKeys = privateKeys.map((privateKey) => {
-    //   const parsedPrivateKey = Key.PrivateKey.fromString(privateKey);
-
-    //   return {
-    //     publicKey: parsedPrivateKey.getPublicKey().toString(),
-    //     privateKey: parsedPrivateKey.toString(),
-    //   };
-    // });
-    //CliUx.ux.styledJSON(displayKeys);
   }
 }
