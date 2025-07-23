@@ -84,7 +84,11 @@ export default class ExportKeys extends Command {
         name: "mode",
         message: "Select the export format",
         type: "list",
-        choices: ["pdf", "txt", "json"],
+        choices: [
+          { name: "PDF (with secure option)", value: "pdf" },
+          { name: "Text file (no secure option)", value: "txt" },
+          { name: "JSON file (no secure option)", value: "json" },
+        ],
       },
     ]);
 
