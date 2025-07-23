@@ -9,6 +9,23 @@ import { green, red } from "colors";
 import { createTxtFile } from "../../utils/toText";
 import { createPdf } from "../../utils/pdfExport";
 import inquirer from "inquirer";
+import { z } from "zod";
+
+const passwordValidator = z
+  .string()
+  .min(16)
+  .refine((val) => /[a-z]/.test(val), {
+    message: "Password must contain at least one lowercase letter",
+  })
+  .refine((val) => /[A-Z]/.test(val), {
+    message: "Password must contain at least one uppercase letter",
+  })
+  .refine((val) => /\d/.test(val), {
+    message: "Password must contain at least one digit",
+  })
+  .refine((val) => /[@_#!?*&$]/.test(val), {
+    message: "Password must contain at least one special character (@_#!?*&$)",
+  });
 
 export type ExportAccountType = {
   chain: string;
@@ -21,6 +38,7 @@ export type ExportConfig = {
   mode: "txt" | "pdf" | "json";
   showPrivateKey: boolean;
   search?: string;
+  protectFile?: boolean;
   password?: string;
   exportPath?: string;
 };
@@ -66,7 +84,7 @@ export default class ExportKeys extends Command {
         name: "mode",
         message: "Select the export format",
         type: "list",
-        choices: ["txt", "pdf", "json"],
+        choices: ["pdf", "txt", "json"],
       },
     ]);
 
@@ -81,16 +99,35 @@ export default class ExportKeys extends Command {
         },
       ]);
 
-      exportConfig.showPrivateKey = displayPrivateKey.displayPrivateKey;
-
-      const password = await inquirer.prompt([
+      const protectFile = await inquirer.prompt([
         {
-          name: "password",
-          message: "File protection password (leave blank for no protection)",
-          type: "input",
+          name: "protectFile",
+          message: "Protect the file with a password?",
+          type: "confirm",
         },
       ]);
-      exportConfig.password = password.password;
+
+      exportConfig.protectFile = protectFile.protectFile;
+
+      if (exportConfig.protectFile) {
+        const password = await inquirer.prompt([
+          {
+            name: "password",
+            message:
+              "Your 16 chars password with uppercase, lowercase, digits and special character (@_#!?*&$)",
+            type: "input",
+            validate: async (input: string) => {
+              const result = passwordValidator.safeParse(input);
+              if (!result.success) {
+                return result.error.format()._errors.join("\n");
+              } else {
+                return true;
+              }
+            },
+          },
+        ]);
+        exportConfig.password = password.password;
+      }
     }
 
     if (privateKeys.length > 0) {

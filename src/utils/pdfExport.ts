@@ -20,6 +20,7 @@ export function createPdf(
 ) {
   const PdfPrinter = new pdfMake(fonts);
   const docDefinition = {
+    version: "1.7ext3",
     pageSize: "A5",
     content: [
       { text: "WARNING." },
