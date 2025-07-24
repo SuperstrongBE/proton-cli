@@ -1,13 +1,5 @@
 import { LIGHT_CLIENT_ENDPOINTS } from "../constants";
-import { wait } from "./wait";
 
-type LookupKeyResponse = {
-  [key: "protontest" | "proton"]: {
-    accounts: {
-      [key: string]: [];
-    };
-  };
-};
 export async function pubKeyToAccount(
   publicKey: string,
   chain: string,

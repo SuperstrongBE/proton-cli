@@ -2,6 +2,11 @@ import pdfMake from "pdfmake";
 import fs from "fs";
 import path from "path";
 import { ExportAccountType } from "../commands/key/export";
+import {
+  CanvasElement,
+  Content,
+  TDocumentDefinitions,
+} from "pdfmake/interfaces";
 const longText =
   "The amount of data that can be stored in the QR code symbol depends on the datatype (mode, or input character set), version (1, …, 40, indicating the overall dimensions of the symbol), and error correction level. The maximum storage capacities occur for 40-L symbols (version 40, error correction level L):";
 
@@ -19,7 +24,7 @@ export function createPdf(
   showPrivateKey?: boolean
 ) {
   const PdfPrinter = new pdfMake(fonts);
-  const docDefinition = {
+  const docDefinition: TDocumentDefinitions = {
     version: "1.7ext3",
     pageSize: "A5",
     content: [
@@ -28,7 +33,9 @@ export function createPdf(
         text: "This following documents contains highly sensitive informations, make sure to store it securely. If you print it, store it into a secure vault and delete the file.",
         pageBreak: "after",
       },
-      ...accounts.map((account) => exportAccount(account, showPrivateKey)),
+      ...(accounts.map((account) =>
+        exportAccount(account, showPrivateKey)
+      ) as Content[]),
     ],
     styles: {
       fieldHeader: {
@@ -40,7 +47,7 @@ export function createPdf(
         fontSize: 16,
       },
       waLabel: {
-        align: "center",
+        alignment: "center" as const,
         background: "black",
         color: "#FFFFFF",
       },
@@ -62,7 +69,10 @@ export function createPdf(
   pdf.end();
 }
 
-function exportAccount(account: ExportAccountType, showPrivateKey?: boolean) {
+function exportAccount(
+  account: ExportAccountType,
+  showPrivateKey?: boolean
+): Content {
   const definition = {
     pageBreak: "after",
     table: {
@@ -124,5 +134,5 @@ function exportAccount(account: ExportAccountType, showPrivateKey?: boolean) {
       ],
     ]);
   }
-  return definition;
+  return definition as Content;
 }
