@@ -4,7 +4,7 @@ import passwordManager from "../../storage/passwordManager";
 import { Key } from "@proton/js";
 
 import { config } from "../../storage/config";
-import { pubKeyToaccount } from "../../utils/pubkeyToAccount";
+import { pubKeyToAccount } from "../../utils/pubkeyToAccount";
 import { green, red } from "colors";
 import { createTxtFile } from "../../utils/toText";
 import { createPdf } from "../../utils/pdfExport";
@@ -103,6 +103,8 @@ export default class ExportKeys extends Command {
         },
       ]);
 
+      exportConfig.showPrivateKey = displayPrivateKey.displayPrivateKey;
+
       const protectFile = await inquirer.prompt([
         {
           name: "protectFile",
@@ -140,7 +142,7 @@ export default class ExportKeys extends Command {
       const accountsData = privateKeys.map(async (privateKey) => {
         const parsedPrivateKey = Key.PrivateKey.fromString(privateKey);
         const publicKey = parsedPrivateKey.getPublicKey().toString();
-        const accounts = await pubKeyToaccount(
+        const accounts = await pubKeyToAccount(
           publicKey,
           chain,
           search.search === "" ? undefined : search.search
