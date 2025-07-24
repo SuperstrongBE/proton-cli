@@ -4,7 +4,7 @@ import passwordManager from "../../storage/passwordManager";
 import { Key } from "@proton/js";
 
 import { config } from "../../storage/config";
-import { lookupKey } from "../../utils/pubkeyToAccount";
+import { pubKeyToaccount } from "../../utils/pubkeyToAccount";
 import { green, red } from "colors";
 import { createTxtFile } from "../../utils/toText";
 import { createPdf } from "../../utils/pdfExport";
@@ -135,12 +135,12 @@ export default class ExportKeys extends Command {
     }
 
     if (privateKeys.length > 0) {
-      CliUx.ux.action.start(green("Exporting keys"));
+      CliUx.ux.action.start(green("Exporting keys (this may take a bit)"));
 
       const accountsData = privateKeys.map(async (privateKey) => {
         const parsedPrivateKey = Key.PrivateKey.fromString(privateKey);
         const publicKey = parsedPrivateKey.getPublicKey().toString();
-        const accounts = await lookupKey(
+        const accounts = await pubKeyToaccount(
           publicKey,
           chain,
           search.search === "" ? undefined : search.search
@@ -149,15 +149,24 @@ export default class ExportKeys extends Command {
           chain,
           accounts,
           publicKey,
-          privateKey: "PVT_K1_NOT_REVEALED_FOR_DEMO_DUH",
+          privateKey,
         };
       });
       Promise.all(accountsData).then((data) => {
         const exportedKeys = data.filter((item) => item.accounts !== null);
+        // Remove duplicated public keys from the exportedKeys
+        const seenPublicKeys = new Set();
+        const uniqueExportedKeys = [];
+        for (const item of exportedKeys) {
+          if (!seenPublicKeys.has(item.publicKey)) {
+            seenPublicKeys.add(item.publicKey);
+            uniqueExportedKeys.push(item);
+          }
+        }
 
         if (exportMode.mode === "pdf") {
           createPdf(
-            exportedKeys,
+            uniqueExportedKeys,
             `${pdfFileName}.pdf`,
             exportConfig.password,
             exportConfig.showPrivateKey
@@ -165,7 +174,7 @@ export default class ExportKeys extends Command {
         }
 
         if (exportConfig.mode === "txt") {
-          const txtContent = exportedKeys.map((item) => {
+          const txtContent = uniqueExportedKeys.map((item) => {
             return `${JSON.stringify(item)}\n`;
           });
           createTxtFile(txtContent.join(""), `${pdfFileName}.txt`);
@@ -173,7 +182,7 @@ export default class ExportKeys extends Command {
 
         if (exportConfig.mode === "json") {
           createTxtFile(
-            JSON.stringify(exportedKeys, null, 2),
+            JSON.stringify(uniqueExportedKeys, null, 2),
             `${pdfFileName}.json`
           );
         }
@@ -182,7 +191,7 @@ export default class ExportKeys extends Command {
         CliUx.ux.log(
           green(
             `Exported ${
-              exportedKeys.length
+              uniqueExportedKeys.length
             } keys to ${process.cwd()}/${pdfFileName}.${exportMode.mode}`
           )
         );

@@ -1,4 +1,5 @@
 import { LIGHT_CLIENT_ENDPOINTS } from "../constants";
+import { wait } from "./wait";
 
 type LookupKeyResponse = {
   [key: "protontest" | "proton"]: {
@@ -7,7 +8,7 @@ type LookupKeyResponse = {
     };
   };
 };
-export async function lookupKey(
+export async function pubKeyToAccount(
   publicKey: string,
   chain: string,
   accountFilter?: string
@@ -28,9 +29,9 @@ export async function lookupKey(
         let accounts = Object.keys(data[responseRoot].accounts);
         if (accounts.length === 0) return null;
         if (accountFilter) {
-          const filteredAccounts = accounts.filter((account) =>
-            account.includes(accountFilter)
-          );
+          const filteredAccounts = accounts.filter((account) => {
+            return account.includes(accountFilter);
+          });
           if (filteredAccounts.length === 0) return null;
           accounts = filteredAccounts;
         }
