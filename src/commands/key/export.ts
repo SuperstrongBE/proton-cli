@@ -41,6 +41,7 @@ export type ExportConfig = {
   protectFile?: boolean;
   password?: string;
   exportPath?: string;
+  fileName?: string;
 };
 
 export default class ExportKeys extends Command {
@@ -49,12 +50,12 @@ export default class ExportKeys extends Command {
   async run() {
     const privateKeys = await passwordManager.getPrivateKeys();
     const chain = config.get("currentChain");
-    const pdfFileName = `${chain}_keys_${new Date().getFullYear()}_${new Date().getMonth()}_${new Date().getDate()}`;
+    const pdfFileName = `${chain}_keys_${new Date().getFullYear()}_${new Date().getMonth()}_${new Date().getDate()}_${new Date().getHours()}_${new Date().getMinutes()}`;
     const agree = await inquirer.prompt([
       {
         name: "agree",
         message:
-          "You are about to export accounts's sensitive information. Do you agree ?",
+          "You are about to export accounts's sensitive information. Do you agree?",
         type: "confirm",
       },
     ]);
@@ -67,6 +68,7 @@ export default class ExportKeys extends Command {
     const exportConfig: ExportConfig = {
       mode: "txt",
       showPrivateKey: false,
+      fileName: pdfFileName,
     };
 
     const search = await inquirer.prompt([
@@ -93,6 +95,17 @@ export default class ExportKeys extends Command {
     ]);
 
     exportConfig.mode = exportMode.mode;
+
+    const fileName = await inquirer.prompt([
+      {
+        name: "fileName",
+        message: "Enter the file name (default: " + pdfFileName + ")",
+        type: "input",
+        default: pdfFileName,
+      },
+    ]);
+
+    exportConfig.fileName = fileName.fileName;
 
     if (exportConfig.mode === "pdf") {
       const displayPrivateKey = await inquirer.prompt([
@@ -169,7 +182,7 @@ export default class ExportKeys extends Command {
         if (exportMode.mode === "pdf") {
           createPdf(
             uniqueExportedKeys,
-            `${pdfFileName}.pdf`,
+            `${exportConfig.fileName}.pdf`,
             exportConfig.password,
             exportConfig.showPrivateKey
           );
@@ -179,22 +192,22 @@ export default class ExportKeys extends Command {
           const txtContent = uniqueExportedKeys.map((item) => {
             return `${JSON.stringify(item)}\n`;
           });
-          createTxtFile(txtContent.join(""), `${pdfFileName}.txt`);
+          createTxtFile(txtContent.join(""), `${exportConfig.fileName}.txt`);
         }
 
         if (exportConfig.mode === "json") {
           createTxtFile(
             JSON.stringify(uniqueExportedKeys, null, 2),
-            `${pdfFileName}.json`
+            `${exportConfig.fileName}.json`
           );
         }
 
         CliUx.ux.action.stop(green(`Done`));
         CliUx.ux.log(
           green(
-            `Exported ${
-              uniqueExportedKeys.length
-            } keys to ${process.cwd()}/${pdfFileName}.${exportMode.mode}`
+            `Exported ${uniqueExportedKeys.length} keys to ${process.cwd()}/${
+              exportConfig.fileName
+            }.${exportMode.mode}`
           )
         );
       });

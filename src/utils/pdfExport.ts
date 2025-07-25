@@ -2,13 +2,7 @@ import pdfMake from "pdfmake";
 import fs from "fs";
 import path from "path";
 import { ExportAccountType } from "../commands/key/export";
-import {
-  CanvasElement,
-  Content,
-  TDocumentDefinitions,
-} from "pdfmake/interfaces";
-const longText =
-  "The amount of data that can be stored in the QR code symbol depends on the datatype (mode, or input character set), version (1, …, 40, indicating the overall dimensions of the symbol), and error correction level. The maximum storage capacities occur for 40-L symbols (version 40, error correction level L):";
+import { Content, TDocumentDefinitions } from "pdfmake/interfaces";
 
 const fonts = {
   Roboto: {
@@ -28,23 +22,21 @@ export function createPdf(
     version: "1.7ext3",
     pageSize: "A5",
     content: [
-      { text: "WARNING." },
-      {
-        text: "This following documents contains highly sensitive informations, make sure to store it securely. If you print it, store it into a secure vault and delete the file.",
-        pageBreak: "after",
-      },
-      ...(accounts.map((account) =>
-        exportAccount(account, showPrivateKey)
+      ...(accounts.map((account, index) =>
+        exportAccount(account, showPrivateKey, index < accounts.length - 1)
       ) as Content[]),
     ],
     styles: {
       fieldHeader: {
         fontSize: 10,
-
         color: "#737373",
       },
+      warning: {
+        fontSize: 10,
+        color: "#FF0000",
+      },
       fieldValue: {
-        fontSize: 16,
+        fontSize: 12,
       },
       waLabel: {
         alignment: "center" as const,
@@ -71,13 +63,21 @@ export function createPdf(
 
 function exportAccount(
   account: ExportAccountType,
-  showPrivateKey?: boolean
+  showPrivateKey?: boolean,
+  breakPage?: boolean
 ): Content {
   const definition = {
-    pageBreak: "after",
+    pageBreak: breakPage ? "after" : undefined,
+
     table: {
       widths: ["100%"],
       body: [
+        [
+          {
+            text: "This following documents contains highly sensitive informations, make sure to store it securely. If you print it, store it into a secure vault and delete the file.",
+            style: "warning",
+          },
+        ],
         [
           [
             { text: "Chain", style: "fieldHeader" },
@@ -88,8 +88,8 @@ function exportAccount(
           [
             {
               qr: account.privateKey,
-              fit: 260,
-              margin: [40, 40, 40, 20],
+              fit: 200,
+              margin: [70, 20, 40, 20],
             },
             {
               margin: [40, 0, 40, 40],
