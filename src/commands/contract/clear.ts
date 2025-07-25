@@ -42,7 +42,7 @@ export default class CleanContract extends Command {
         })
 
         CliUx.ux.log(green(`WASM Successfully cleaned:`))
-        CliUx.ux.url(`View TX`, `https://${config.get('currentChain')}.ProtonScan.io/tx/${(res as any).transaction_id}?tab=traces`)
+        CliUx.ux.url(`View TX`, `${getExplorer()}/tx/${(res as any).transaction_id}?tab=traces`)
       } catch (e) {
         parseDetailsError(e)
       }
