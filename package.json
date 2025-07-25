@@ -44,7 +44,7 @@
     "build": "npm run prepack && npm run postpack",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "eslint . --ext .ts --config .eslintrc",
-    "prepack": "rm -rf lib && tsc -b && npx oclif manifest && npx oclif readme && shx cp -r src/templates lib",
+    "prepack": "rm -rf lib && tsc -b && npx oclif manifest && npx oclif readme && shx cp -r src/templates src/fixtures lib",
     "testbase": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "test": "npm run testbase -- \"test/**/*.test.ts\"",
     "testsome": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\" --exclude \"**/boilerplate.test.ts\"",
@@ -128,6 +128,6 @@
     }
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }
