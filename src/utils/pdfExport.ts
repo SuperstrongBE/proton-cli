@@ -81,7 +81,7 @@ function exportAccount(
         [
           [
             { text: "Chain", style: "fieldHeader" },
-            { text: account.chain, style: "filedValue" },
+            { text: account.chain, style: "fieldValue" },
           ],
         ],
         [
@@ -114,13 +114,13 @@ function exportAccount(
         [
           [
             { text: "Accounts", style: "fieldHeader" },
-            { text: account.accounts?.join(", "), style: "filedValue" },
+            { text: account.accounts?.join(", "), style: "fieldValue" },
           ],
         ],
         [
           [
             { text: "Public key", style: "fieldHeader" },
-            { text: account.publicKey, style: "filedValue" },
+            { text: account.publicKey, style: "fieldValue" },
           ],
         ],
       ],
@@ -130,7 +130,7 @@ function exportAccount(
     definition.table.body.push([
       [
         { text: "Private key", style: "fieldHeader" },
-        { text: account.privateKey, style: "filedValue" },
+        { text: account.privateKey, style: "fieldValue" },
       ],
     ]);
   }
